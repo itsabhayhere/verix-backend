@@ -17,14 +17,11 @@ connectDB();
 // Middleware
 app.use(cookieParser());
 
+const cors = require("cors");
+
 app.use(
   cors({
-    origin: [
-        "http://localhost:3000",
-        "https://verix-frontend.onrender.com"
-      ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    
+    origin: "https://verix-frontend.vercel.app",
     credentials: true,
   })
 );
