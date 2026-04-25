@@ -13,20 +13,48 @@ const signToken = (user) => {
     }
   );
 };
+// const sendTokenResponse = (user, statusCode, res) => {
+//   const token = signToken(user);
+
+//   res.cookie("token", token, {
+//     httpOnly: true,
+//     secure: true,          // required for HTTPS
+//     sameSite: "none",      // required for cross-domain cookies
+//     path: "/",
+//     maxAge: 7 * 24 * 60 * 60 * 1000,
+//   });
+
+//   res.status(statusCode).json({
+//     success: true,
+//     token, // optional but recommended
+//     data: {
+//       user: {
+//         id: user._id,
+//         name: user.name,
+//         email: user.email,
+//         role: user.role,
+//       },
+//     },
+//   });
+// };
+
 const sendTokenResponse = (user, statusCode, res) => {
   const token = signToken(user);
 
+  const isProduction = process.env.NODE_ENV === "production";
+
   res.cookie("token", token, {
     httpOnly: true,
-    secure: true,          // required for HTTPS
-    sameSite: "none",      // required for cross-domain cookies
+    secure: isProduction,                 // HTTPS only in production
+    sameSite: isProduction ? "none" : "lax",
+    domain: isProduction ? ".onrender.com" : "localhost",
     path: "/",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
   res.status(statusCode).json({
     success: true,
-    token, // optional but recommended
+    token,
     data: {
       user: {
         id: user._id,
